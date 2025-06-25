@@ -1,0 +1,40 @@
+### 🔐 Login
+POST http://localhost:8000/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "1234"
+}
+
+###
+
+### 📋 Get all notes (user_id=1)
+GET http://localhost:8000/notes?user_id=1
+
+###
+
+### 📝 Create a new note
+POST http://localhost:8000/notes?user_id=1
+Content-Type: application/json
+
+{
+  "title": "My First Note",
+  "content": "This is my first note content!"
+}
+
+###
+
+### ✏️ Update a note (change ID to real one)
+PUT http://localhost:8000/notes/1
+Content-Type: application/json
+
+{
+  "title": "Updated Title",
+  "content": "Updated content of the note"
+}
+
+###
+
+### ❌ Delete a note (change ID to real one)
+DELETE http://localhost:8000/notes/1
