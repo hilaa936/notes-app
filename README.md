@@ -24,33 +24,6 @@ Built with **React + TypeScript** on the frontend and **FastAPI (Python)** on th
 - ⚙️ Backend with FastAPI & SQLite
 - 💡 Clean code structure with React Router & Axios
 
-## 🧱 Project Structure
-
-```
-notes-project/
-├── notes-api/                  # FastAPI backend
-│   ├── main.py                 # Entry point with all endpoints
-│   ├── models.py               # SQLAlchemy models (User, Note)
-│   ├── database.py             # DB engine & session setup
-│   ├── schemas.py              # Pydantic request/response models
-│   ├── crud.py                 # Data access functions (create, read, update, delete)
-│   └── users.json              # Hardcoded user credentials for login
-│
-└── notes-client/               # React + TypeScript frontend
-    ├── src/
-    │   ├── api/
-    │   │   └── notesApi.ts     # Axios-based API calls
-    │   ├── pages/
-    │   │   ├── LoginPage.tsx         # Login form
-    │   │   ├── NotesPage.tsx         # List + delete + navigation
-    │   │   ├── CreateNotePage.tsx    # Create note form with validation
-    │   │   └── EditNotePage.tsx      # Edit note form with validation
-    │   ├── types.ts             # Shared Note interface
-    │   ├── App.tsx              # Routes definition
-    │   └── main.tsx             # React DOM rendering
-    └── index.html               # HTML entry with root div
-```
-
 ## 🛠 Getting Started
 
 ### 📦 1. Backend (FastAPI)
