@@ -24,16 +24,22 @@ app.add_middleware(
 # אתחול סכמת מסד הנתונים
 Base.metadata.create_all(bind=engine)
 
-# Seed default user if not exists
+# Seed default users from users.json if not exist
 with SessionLocal() as db:
     from models import User
-    email = "test@example.com"
-    password = "1234"
-    if not db.query(User).filter_by(email=email).first():
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        user = User(email=email, password=hashed_password)
-        db.add(user)
+    try:
+        with open("users.json") as f:
+            users = json.load(f)
+        for user_data in users:
+            email = user_data["email"]
+            password = user_data["password"]
+            if not db.query(User).filter_by(email=email).first():
+                hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                user = User(email=email, password=hashed_password)
+                db.add(user)
         db.commit()
+    except Exception as e:
+        print(f"User seeding failed: {e}")
 
 SECRET_KEY = "your-secret-key"  # Change this in production
 ALGORITHM = "HS256"
