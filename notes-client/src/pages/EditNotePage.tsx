@@ -1,54 +1,75 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getNotes, updateNote } from "../api/notesApi";
+import { getNotes, updateNote, deleteNote } from "../api/notesApi";
 import type { Note } from "../types";
 
 export default function EditNotePage() {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const userId = Number(localStorage.getItem("user_id"));
   const [note, setNote] = useState<Note | null>(null);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    getNotes(userId).then((all) => {
-      const found = all.find((n) => n.id === Number(id));
-      if (found) {
-        setNote(found);
-        setTitle(found.title);
-        setContent(found.content);
-      }
-    });
-  }, [id, userId]);
+    getNotes()
+      .then((notes) => {
+        const found = notes.find((n) => n.id === Number(id));
+        if (found) setNote(found);
+        else navigate("/notes");
+      })
+      .catch((e) => {
+        if (e.response && e.response.status === 401) {
+          localStorage.removeItem("access_token");
+          navigate("/");
+        } else {
+          alert("Failed to fetch note");
+        }
+      });
+  }, [id, navigate]);
 
-  const handleSave = async () => {
-    if (!title.trim()) {
-      setError("Title is required");
-      return;
-    }
+  const handleUpdate = async () => {
     if (!note) return;
-    await updateNote({ ...note, title, content });
-    navigate("/notes");
+    try {
+      await updateNote(note);
+      navigate("/notes");
+    } catch (e: any) {
+      if (e.response && e.response.status === 401) {
+        localStorage.removeItem("access_token");
+        navigate("/");
+      } else {
+        alert("Failed to update note");
+      }
+    }
   };
 
-  if (!note) return <p>Loading...</p>;
+  const handleDelete = async () => {
+    if (!note) return;
+    try {
+      await deleteNote(note.id);
+      navigate("/notes");
+    } catch (e: any) {
+      if (e.response && e.response.status === 401) {
+        localStorage.removeItem("access_token");
+        navigate("/");
+      } else {
+        alert("Failed to delete note");
+      }
+    }
+  };
+
+  if (!note) return <div>Loading...</div>;
 
   return (
     <div>
       <h1>Edit Note</h1>
       <input
-        value={title}
-        onChange={(e) => {
-          setTitle(e.target.value);
-          setError("");
-        }}
+        value={note.title}
+        onChange={(e) => setNote({ ...note, title: e.target.value })}
       />
-      <textarea value={content} onChange={(e) => setContent(e.target.value)} />
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <button onClick={handleSave}>Save</button>
-      <button onClick={() => navigate("/notes")}>Cancel</button>
+      <textarea
+        value={note.content}
+        onChange={(e) => setNote({ ...note, content: e.target.value })}
+      />
+      <button onClick={handleUpdate}>Update</button>
+      <button onClick={handleDelete}>Delete</button>
     </div>
   );
 }

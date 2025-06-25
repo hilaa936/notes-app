@@ -3,36 +3,54 @@ import type { Note } from "../types";
 
 const API_BASE = "http://localhost:8000";
 
+const getAuthHeader = () => {
+  const token = localStorage.getItem("access_token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
 export const login = async (
   email: string,
   password: string
-): Promise<number> => {
-  const res = await axios.post(`${API_BASE}/login`, { email, password });
-  return res.data.user_id;
+): Promise<string> => {
+  const params = new URLSearchParams();
+  params.append("username", email);
+  params.append("password", password);
+  const res = await axios.post(`${API_BASE}/login`, params, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  });
+  return res.data.access_token;
 };
 
-export const getNotes = async (userId: number): Promise<Note[]> => {
+export const getNotes = async (): Promise<Note[]> => {
   const res = await axios.get(`${API_BASE}/notes`, {
-    params: { user_id: userId },
+    headers: getAuthHeader(),
   });
   return res.data;
 };
 
 export const createNote = async (note: Omit<Note, "id">): Promise<Note> => {
   const res = await axios.post(`${API_BASE}/notes`, note, {
-    params: { user_id: note.user_id },
+    headers: getAuthHeader(),
   });
   return res.data;
 };
 
 export const updateNote = async (note: Note): Promise<Note> => {
-  const res = await axios.put(`${API_BASE}/notes/${note.id}`, {
-    title: note.title,
-    content: note.content,
-  });
+  const res = await axios.put(
+    `${API_BASE}/notes/${note.id}`,
+    {
+      title: note.title,
+      content: note.content,
+    },
+    {
+      headers: getAuthHeader(),
+    }
+  );
   return res.data;
 };
 
 export const deleteNote = async (id: number): Promise<void> => {
-  await axios.delete(`${API_BASE}/notes/${id}`);
+  await axios.delete(`${API_BASE}/notes/${id}`, {
+    headers: getAuthHeader(),
+  });
 };

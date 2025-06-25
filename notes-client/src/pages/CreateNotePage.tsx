@@ -5,38 +5,36 @@ import { useNavigate } from "react-router-dom";
 export default function CreateNotePage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [error, setError] = useState("");
-  const userId = Number(localStorage.getItem("user_id"));
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
-    if (!title.trim()) {
-      setError("Title is required");
-      return;
+  const handleCreate = async () => {
+    try {
+      await createNote({ title, content, user_id: 0 }); // user_id is ignored by backend
+      navigate("/notes");
+    } catch (e: any) {
+      if (e.response && e.response.status === 401) {
+        localStorage.removeItem("access_token");
+        navigate("/");
+      } else {
+        alert("Failed to create note");
+      }
     }
-    await createNote({ title, content, user_id: userId });
-    navigate("/notes");
   };
 
   return (
     <div>
-      <h1>Create Note</h1>
+      <h1>New Note</h1>
       <input
-        placeholder="Title *"
+        placeholder="Title"
         value={title}
-        onChange={(e) => {
-          setTitle(e.target.value);
-          setError("");
-        }}
+        onChange={(e) => setTitle(e.target.value)}
       />
       <textarea
         placeholder="Content"
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <button onClick={handleSubmit}>Save</button>
-      <button onClick={() => navigate("/notes")}>Cancel</button>
+      <button onClick={handleCreate}>Create</button>
     </div>
   );
 }
