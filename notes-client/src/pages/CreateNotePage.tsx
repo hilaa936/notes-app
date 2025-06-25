@@ -1,40 +1,66 @@
 import { useState } from "react";
 import { createNote } from "../api/notesApi";
 import { useNavigate } from "react-router-dom";
+import { sharedStyles } from "../styles/sharedStyles";
 
 export default function CreateNotePage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleCreate = async () => {
+    if (!title.trim()) {
+      setError("Title is required");
+      return;
+    }
     try {
-      await createNote({ title, content, user_id: 0 }); // user_id is ignored by backend
+      await createNote({ title, content, user_id: 0 }); // user_id ignored by backend
       navigate("/notes");
-    } catch (e: any) {
-      if (e.response && e.response.status === 401) {
-        localStorage.removeItem("access_token");
-        navigate("/");
-      } else {
-        alert("Failed to create note");
-      }
+    } catch {
+      alert("Failed to create note");
     }
   };
 
   return (
-    <div>
-      <h1>New Note</h1>
-      <input
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <textarea
-        placeholder="Content"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-      />
-      <button onClick={handleCreate}>Create</button>
+    <div style={styles.page}>
+      <div style={styles.container}>
+        <h1 style={styles.title}>Create New Note</h1>
+
+        <label style={styles.label}>Title *</label>
+        <input
+          style={styles.input}
+          placeholder="Enter note title"
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+            setError("");
+          }}
+        />
+        {error && <p style={styles.error}>{error}</p>}
+
+        <label style={styles.label}>Content</label>
+        <textarea
+          style={{ ...styles.input, height: "150px", resize: "vertical" }}
+          placeholder="Write your note here..."
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+        />
+
+        <div style={styles.buttonGroup}>
+          <button style={styles.primaryButton} onClick={handleCreate}>
+            Save
+          </button>
+          <button
+            style={styles.secondaryButton}
+            onClick={() => navigate("/notes")}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
+
+const styles = sharedStyles;

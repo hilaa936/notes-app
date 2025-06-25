@@ -1,15 +1,19 @@
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
+import WelcomePage from "./pages/WelcomePage";
 import NotesPage from "./pages/NotesPage";
 import CreateNotePage from "./pages/CreateNotePage";
 import EditNotePage from "./pages/EditNotePage";
+import Header from "./components/Header";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   return (
     <BrowserRouter>
+      <Header />
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<WelcomePage />} />
+        <Route path="/register" element={<RegisterPage />} />{" "}
+        {/* dummy if needed */}
         <Route path="/notes" element={<NotesPage />} />
         <Route path="/notes/new" element={<CreateNotePage />} />
         <Route path="/notes/edit/:id" element={<EditNotePage />} />
