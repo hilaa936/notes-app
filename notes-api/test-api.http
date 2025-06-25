@@ -7,6 +7,16 @@ Content-Type: application/json
   "password": "1234"
 }
 
+
+### 🔐 Register
+
+POST http://localhost:8000/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "1234"
+}
 ###
 
 ### 📋 Get all notes (user_id=1)

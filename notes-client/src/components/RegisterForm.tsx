@@ -6,9 +6,15 @@ export default function RegisterForm() {
       <p style={styles.note}>Registration is disabled in this demo. Use:</p>
       <p>
         <strong>Email:</strong> test@example.com
+        <br />
+        <strong>Password:</strong> 1234
       </p>
       <p>
-        <strong>Password:</strong> 1234
+        or
+        <p>
+          <strong>Email:</strong> test2@example.com
+          <br /> <strong>Password:</strong> 1234
+        </p>
       </p>
     </div>
   );
